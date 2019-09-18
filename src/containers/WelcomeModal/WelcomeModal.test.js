@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { WelcomeModal, mapDispatchToProps } from './WelcomeModal';
-import { createUser, hasErrored } from '../../actions';
+import { createUser, hasErrored, addMessage } from '../../actions';
 import { startConversation } from '../../apiCalls';
 
 jest.mock('../../apiCalls');
@@ -86,7 +86,7 @@ describe('WelcomeModal component', () => {
     await wrapper.instance().connectToChatBot();
 
     expect(startConversation).toHaveBeenCalledWith('happy');
-    expect(mockAddMessage).toHaveBeenCalledWith(mockMessage.message, false);
+    expect(mockAddMessage).toHaveBeenCalledWith(mockMessage, false);
   });
 
   it('should call hasErrored with correct arguments if connectToChatBot rejects', async () => {
@@ -166,5 +166,21 @@ describe('mapDispatchToProps', () => {
     mappedProps.hasErrored('fetch failed');
 
     expect(mockDispatch).toHaveBeenCalledWith(actionToDispatch);
+  });
+
+  it('calls dispatch with a addMessages action when addMessages is called', () => {
+    const mockDispatch = jest.fn();
+    const mockMessage = {
+      message: 'Blah', isUser: true
+
+    }
+    const actionToDispatch = addMessage(mockMessage);
+
+    const mappedProps = mapDispatchToProps(mockDispatch);
+
+    mappedProps.addMessage(mockMessage);
+
+    expect(mockDispatch).toHaveBeenCalledWith(actionToDispatch);
+
   });
 })
