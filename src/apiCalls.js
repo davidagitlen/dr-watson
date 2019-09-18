@@ -36,7 +36,7 @@ export const postMessage = async newMessage => {
   const data = await response.json();
   console.log(data)
   return data;
-}
+};
 
 export const endConversation = async () => {
   const url = 'https://drwatson-api.herokuapp.com/api/v1/end_session';
