@@ -25,6 +25,7 @@ describe('ChatBox component', () => {
     wrapper = shallow(<ChatBox
       messages={mockMessages}
       hasErrored={mockHasErrored}
+      addMessage={jest.fn()}
     />);
   });
 
@@ -87,16 +88,18 @@ describe('ChatBox component', () => {
     wrapper = mount(<ChatBox
       messages={mockMessages}
       hasErrored={mockHasErrored}
+      addMessage={jest.fn()}
     />);
 
     postMessage.mockImplementation(() => {
-      return Promise.resolve({ message: 'My name is Dr. Watson.  How are you today?' });
+      return Promise.resolve({ message: 'My name is Dr. Watson. How are you today?' });
     });
 
     wrapper.instance().setState({ message: 'Hi there.' });
     await wrapper.instance().messageChatBot();
 
-    expect(postMessage).toHaveBeenCalledWith('Hi there.')
+    expect(postMessage).toHaveBeenCalledWith('Hi there.');
+    expect(wrapper.instance().props.addMessage).toHaveBeenCalledWith({message: 'My name is Dr. Watson. How are you today?'}, false);
   });
 
   it('should call hasErrored if messageChatBot rejects', async () => {
@@ -124,16 +127,19 @@ describe('mapStateToProps', () => {
       feeling: "tired"
     };
 
+    const mockMessages = [{
+      message: 'Hi there, my name is Dr. Watson. I understand that you have been feeling happy. That is super exciting to hear!',
+      isUser: false,
+    }];
+
     const mockState = {
       user: mockUser,
-      messages: [{
-        message: 'Hi there, my name is Dr. Watson. I understand that you have been feeling happy. That is super exciting to hear!',
-        isUser: false,
-      }],
+      messages: mockMessages,
       errorMsg: ''
     };
     const expected = {
-      errorMsg: ''
+      errorMsg: '',
+      messages: mockMessages
     };
     const mappedProps = mapStateToProps(mockState);
 
