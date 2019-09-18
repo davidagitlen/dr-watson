@@ -25,7 +25,6 @@ export class ChatBox extends Component {
   handleSubmit = e => {
     if (e.key === 'Enter' || e.button === 0) {
       const { message } = this.state;
-      console.log('in chatbox', message)
       this.props.addMessage({message : message}, true);
       this.setState({ message: '' });
       this.messageChatBot();
