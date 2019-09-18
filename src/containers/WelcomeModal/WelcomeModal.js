@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { createUser, hasErrored } from '../../actions'
+import { createUser, hasErrored, addMessage } from '../../actions'
 import { startConversation } from '../../apiCalls';
 import './WelcomeModal.css'
 
@@ -23,19 +23,24 @@ export class WelcomeModal extends Component {
   handleSubmit = e => {
     const { firstName, lastName, feeling } = this.state;
     e.preventDefault();
-    this.props.createUser({
-      id: Date.now(),
-      firstName,
-      lastName,
-      feeling,
-    });
+    if (firstName && lastName && feeling) {
+      this.props.createUser({
+        id: Date.now(),
+        firstName,
+        lastName,
+        feeling,
+      });
     this.connectToChatBot();
+    }
+    else {
+      this.setState({error: 'Please fill out all fields before signing in!'})
+    }
   }
 
   connectToChatBot = async () => {
     try {
       const firstMessage = await startConversation(this.state.feeling);
-      this.props.addMessage(firstMessage.message, false);
+      this.props.addMessage(firstMessage, false);
     } catch({ message }) {
       this.props.hasErrored(message);
     }
@@ -76,6 +81,6 @@ export class WelcomeModal extends Component {
   }
 }
 
-export const mapDispatchToProps = dispatch => bindActionCreators({ createUser, hasErrored }, dispatch)
+export const mapDispatchToProps = dispatch => bindActionCreators({ createUser, hasErrored, addMessage }, dispatch)
 
 export default connect(null, mapDispatchToProps)(WelcomeModal);
