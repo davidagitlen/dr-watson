@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { App, mapStateToProps, mapDispatchToProps } from './App';
-import { removeUser, hasErrored } from '../../actions';
+import { removeUser, hasErrored, clearMessages } from '../../actions';
 import { endConversation } from '../../apiCalls';
 
 jest.mock('../../apiCalls');
@@ -60,7 +60,7 @@ describe('App component', () => {
 });
 
 describe('mapStateToProps', () => {
-  it('should return an object with the user information', () => {
+  it('should return an object with the user information and an array of messages', () => {
     const mockUser = {
       id: 1568665187737, 
       firstName: "Travis", 
@@ -68,22 +68,26 @@ describe('mapStateToProps', () => {
       feeling: "tired"
     };
 
+    const mockMessages = [{
+      message: 'Hi there, my name is Dr. Watson. I understand that you have been feeling happy. That is super exciting to hear!',
+      isUser: false,
+    }]
+
     const mockState = {
       user: mockUser,
-      messages: [{
-        message: 'Hi there, my name is Dr. Watson. I understand that you have been feeling happy. That is super exciting to hear!',
-        isUser: false,
-      }],
+      messages: mockMessages,
       errorMsg: ''
     };
     const expected = {
-      user: mockUser
+      user: mockUser,
+      messages: mockMessages
     }
 
     const mappedProps = mapStateToProps(mockState);
     
     expect(mappedProps).toEqual(expected);
   });
+
 });
 
 describe('mapDispatchToProps', () => {
